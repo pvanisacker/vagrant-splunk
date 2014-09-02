@@ -1,5 +1,7 @@
 class splunk {
-
+	file { ["/opt/splunk", "/opt/splunk/etc","/opt/splunk/etc/apps"]:
+		ensure  => directory,
+	}
 	package { "splunk":
 		source => "file:///vagrant/rpm/$splunk_rpm",
 		ensure => installed,
@@ -13,6 +15,7 @@ class splunk {
 		owner => 'root', group => 'root', mode => '0600',
 		source => 'puppet:///modules/splunk/passwd',
 		require => Package[ 'splunk' ],
+		notify  => Service["splunk"]
 	}
 	service { 'splunk':
 		ensure => 'running',
@@ -24,10 +27,21 @@ class splunk {
 		ensure  => directory,
 	}
 	file { "/opt/splunk/etc/system/local/web.conf":
-		source => "puppet:///modules/splunk/web.conf"
+		source => "puppet:///modules/splunk/web.conf",
+		require => File["/opt/splunk/etc/system/local"],
+		notify  => Service["splunk"]
 	}
 	
-	class { "splunk::sos": }
-	class { "splunk::sideview_utils": }
-	class { "splunk::splunkonunix": }
+	class { "splunk::sos":
+		notify  => Service["splunk"]
+	}
+	class { "splunk::sideview_utils":
+		notify  => Service["splunk"]
+	}
+	class { "splunk::splunk_app_for_nix": 
+		notify  => Service["splunk"]
+	}
+	class { "splunk::Splunk_TA_nix": 
+		notify  => Service["splunk"]
+	}
 }

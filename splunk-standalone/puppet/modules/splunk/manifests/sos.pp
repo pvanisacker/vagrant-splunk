@@ -10,6 +10,6 @@ class splunk::sos (){
 		ensure  => directory,
 	}
 	file { "/opt/splunk/etc/apps/sos/local/inputs.conf":
-		source => "puppet:///modules/splunk/sos_inputs.conf"
+		source => "puppet:///modules/splunk/sos/inputs.conf"
 	}
 }

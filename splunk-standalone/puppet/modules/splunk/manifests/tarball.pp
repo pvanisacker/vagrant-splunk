@@ -8,7 +8,6 @@
 		# untar the tarball at the desired location
 		exec { "untar $pkg_tgz":
 			command => "/bin/tar xzvf /tmp/$pkg_tgz -C $install_dir/",
-			refreshonly => true,
 			require => File["/tmp/$pkg_tgz"],
 		}
 	}
