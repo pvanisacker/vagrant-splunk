@@ -1,4 +1,9 @@
-class splunk::Splunk_TA_nix (){
+class splunk::splunk_TA_nix (){
+	splunk::tarball{"$splunktanix_tgz":
+		source_path => "file:///vagrant/apps/",
+		install_dir => "/opt/splunk/etc/apps/",
+		pkg_tgz     => "$splunktanix_tgz",
+	}
 	file { ["/opt/splunk/etc/apps/Splunk_TA_nix", "/opt/splunk/etc/apps/Splunk_TA_nix/local"]:
 		ensure  => directory,
 	}

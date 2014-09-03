@@ -33,15 +33,19 @@ class splunk {
 	}
 	
 	class { "splunk::sos":
-		notify  => Service["splunk"]
+		notify  => Service["splunk"],
+		require => Package["splunk"]
 	}
 	class { "splunk::sideview_utils":
-		notify  => Service["splunk"]
+		notify  => Service["splunk"],
+		require => Package["splunk"]
 	}
 	class { "splunk::splunk_app_for_nix": 
-		notify  => Service["splunk"]
+		notify  => Service["splunk"],
+		require => Package["splunk"]
 	}
-	class { "splunk::Splunk_TA_nix": 
-		notify  => Service["splunk"]
+	class { "splunk::splunk_TA_nix": 
+		notify  => Service["splunk"],
+		require => Package["splunk"]
 	}
 }
