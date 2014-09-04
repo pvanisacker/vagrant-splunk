@@ -8,7 +8,6 @@ splunk_rpm="splunk-6.1.3-220630-linux-2.6-x86_64.rpm"
 sos_tgz="sos-splunk-on-splunk_32.tgz"
 sideview_utils_tgz="sideview-utils-lgpl_135.tgz"
 splunkonnix_tgz="splunk-app-for-unix-and-linux_501.tgz"
-splunktanix_tgz="splunk-add-on-for-unix-and-linux_503.tgz"
 host_name="splunk"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -17,6 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.host_name = host_name
   config.vm.network "private_network", type: "dhcp"
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
 
   config.vm.provider "virtualbox" do |vb|
     # Use VBoxManage to customize the VM. For example to change memory:
@@ -32,12 +32,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     puppet.manifests_path = "puppet/manifests"
     puppet.manifest_file  = "site.pp"
 	puppet.module_path = "puppet/modules"
+	puppet.options = "--verbose"
 	puppet.facter = {
 		"splunk_rpm" => splunk_rpm,
 		"sos_tgz" => sos_tgz,
 		"sideview_utils_tgz" => sideview_utils_tgz,
-		"splunkonnix_tgz" => splunkonnix_tgz,
-		"splunktanix_tgz" => splunktanix_tgz
+		"splunkonnix_tgz" => splunkonnix_tgz
 	}
   end
 end

@@ -1,11 +1,7 @@
 class splunk::splunk_TA_nix (){
-	splunk::tarball{"$splunktanix_tgz":
-		source_path => "file:///vagrant/apps/",
-		install_dir => "/opt/splunk/etc/apps/",
-		pkg_tgz     => "$splunktanix_tgz",
-	}
-	file { ["/opt/splunk/etc/apps/Splunk_TA_nix", "/opt/splunk/etc/apps/Splunk_TA_nix/local"]:
+	file { "/opt/splunk/etc/apps/Splunk_TA_nix/local":
 		ensure  => directory,
+		require => File["/opt/splunk/etc/apps/Splunk_TA_nix"]
 	}
 	file { "/opt/splunk/etc/apps/Splunk_TA_nix/local/inputs.conf":
 		source => "puppet:///modules/splunk/Splunk_TA_nix/inputs.conf"
