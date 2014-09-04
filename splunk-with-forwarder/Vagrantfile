@@ -1,0 +1,78 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+splunk_rpm="splunk-6.1.3-220630-linux-2.6-x86_64.rpm"
+sos_tgz="sos-splunk-on-splunk_32.tgz"
+sideview_utils_tgz="sideview-utils-lgpl_135.tgz"
+splunkonnix_tgz="splunk-app-for-unix-and-linux_501.tgz"
+
+forwarder_rpm="splunkforwarder-6.1.3-220630-linux-2.6-x86_64.rpm"
+splunkaddonnix_tgz="splunk-add-on-for-unix-and-linux_503.tgz"
+
+splunk_ip="192.168.50.4"
+forwarder_ip="192.168.50.5"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # Every Vagrant virtual environment requires a box to build off of.
+  config.vm.box = "puppetlabs/centos-6.5-64-puppet"
+
+  config.vm.define "splunk" do |splunk|
+    splunk.vm.host_name = "splunk"
+
+    splunk.vm.provider "virtualbox" do |vb|
+      # Use VBoxManage to customize the VM. For example to change memory:
+      vb.customize ["modifyvm", :id, "--memory", "1024"]
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
+      vb.customize ["modifyvm", :id, "--name", "splunk"]
+    end
+
+    splunk.vm.network "private_network", ip: splunk_ip
+    splunk.vm.network "forwarded_port", guest: 8000, host: 8000
+    splunk.vm.network "forwarded_port", guest: 8089, host: 8089
+
+    splunk.vm.synced_folder "../apps/", "/media/apps"
+    splunk.vm.synced_folder "../rpms/", "/media/rpms"
+
+    splunk.vm.provision :puppet do |puppet|
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "splunk.pp"
+      puppet.module_path = "../puppet/modules"
+      puppet.facter = {
+        "splunk_rpm" => splunk_rpm,
+        "sos_tgz" => sos_tgz,
+        "sideview_utils_tgz" => sideview_utils_tgz,
+        "splunkonnix_tgz" => splunkonnix_tgz
+      }
+    end
+  end
+
+  config.vm.define "forwarder" do |forwarder|
+    forwarder.vm.host_name = "forwarder"
+
+    forwarder.vm.provider "virtualbox" do |vb|
+      # Use VBoxManage to customize the VM. For example to change memory:
+      vb.customize ["modifyvm", :id, "--memory", "256"]
+      vb.customize ["modifyvm", :id, "--name", "forwarder"]
+    end
+
+    forwarder.vm.network "private_network", ip: forwarder_ip
+
+    forwarder.vm.synced_folder "../apps/", "/media/apps"
+    forwarder.vm.synced_folder "../rpms/", "/media/rpms"
+
+    forwarder.vm.provision :puppet do |puppet|
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "forwarder.pp"
+      puppet.module_path = "../puppet/modules"
+      puppet.facter = {
+        "forwarder_rpm" => forwarder_rpm,
+        "splunkaddonnix_tgz" => splunkaddonnix_tgz,
+        "splunk_ip" => splunk_ip
+      }
+    end
+  end
+end

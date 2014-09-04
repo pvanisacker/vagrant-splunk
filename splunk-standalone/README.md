@@ -11,9 +11,9 @@ Before starting this box you have to download splunk yourself. As the splunk RPM
 
 Go to http://www.splunk.com/download and choose the 64bit Linux RPM
 
-The rpm is to be saved in the rpms dir.
+The rpm is to be saved in the ../rpms dir.
 
-For the addtional apps you have to download them as well and save the *.tgz files into the apps dir.
+For the addtional apps you have to download them as well and save the *.tgz files into the ../apps dir.
 - Splunk On Splunk app: http://apps.splunk.com/app/748/
 - Sideview Utils app: http://apps.splunk.com/app/466/
 - Splunk App for Unix and Linux: http://apps.splunk.com/app/273/
@@ -22,4 +22,6 @@ Once all of these are installed you also have to update the name of the files in
 
 After that you can start your box by running vagrant up
 
-And you can login to splunk using username admin and password admin.
+Splunk will automatically be started and you can reach it via https://localhost:8000
+
+You can login to splunk using username admin and password admin.

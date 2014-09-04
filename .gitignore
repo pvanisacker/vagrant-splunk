@@ -2,3 +2,4 @@
 *.tar.gz
 *.tgz
 .vagrant
+*.kate-swp

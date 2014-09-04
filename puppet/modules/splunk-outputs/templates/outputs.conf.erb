@@ -1,0 +1,11 @@
+[tcpout]
+disabled = false
+defaultGroup = default
+useACK = true
+autoLB = true
+
+[tcpout:default]
+disabled = false
+server = <%= @splunk_ip %>:9997
+
+[tcpout-server://<%= @splunk_ip %>:9997]
