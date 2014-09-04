@@ -1,11 +1,8 @@
 class splunkforwarder {
 	# Make sure the needed dirs exist
-	file { ["/opt/splunkforwarder",
-			"/opt/splunkforwarder/etc",
-			"/opt/splunkforwarder/etc/apps",
-			"/opt/splunkforwarder/etc/system",
-			"/opt/splunkforwarder/etc/system/local"]:
+	file { "/opt/splunkforwarder/etc/system/local":
 		ensure  => directory,
+		require => Package["splunkforwarder"]
 	}
 
 	# Install splunk
