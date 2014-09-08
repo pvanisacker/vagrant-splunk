@@ -45,20 +45,4 @@ class splunk {
 		require => File["/opt/splunk/etc/system/local"],
 		notify  => Service["splunk"]
 	}
-
-	# Install Splunk On Splunk
-	class { "splunk::sos":
-		notify  => Service["splunk"],
-		require => Package["splunk"]
-	}
-	# Install Sideview Utils
-	class { "splunk::sideview_utils":
-		notify  => Service["splunk"],
-		require => Package["splunk"]
-	}
-	# Install Splunk on Unix and Linux
-	class { "splunk::splunk_app_for_nix":
-		notify  => Service["splunk"],
-		require => Package["splunk"]
-	}
 }
