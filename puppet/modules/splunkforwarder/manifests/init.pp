@@ -30,10 +30,4 @@ class splunkforwarder {
 		command => "/opt/splunkforwarder/bin/splunk edit user admin -password admin -role admin -auth admin:changeme || exit 0",
 		require => Service["splunkforwarder"]
 	}
-
-	# Install Splunk on Unix and Linux
-	class { "splunkforwarder::splunk_ta_nix":
-		notify  => Service["splunkforwarder"],
-		require => Package["splunkforwarder"]
-	}
 }
