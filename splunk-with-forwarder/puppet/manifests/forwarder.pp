@@ -5,6 +5,8 @@ class {'splunk-app-addon-for-nix':
 	require => Package["splunkforwarder"],
 	notify  => Service["splunkforwarder"]
 }
-include splunk-outputs
+class {'splunk-outputs':
+	type => "splunk"
+}
 include httpd
 include loadgen

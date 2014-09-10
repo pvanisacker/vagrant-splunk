@@ -6,6 +6,22 @@ autoLB = true
 
 [tcpout:default]
 disabled = false
-server = <%= @splunk_ip %>:9997
+<%
+@splunk_ip_list=""
+for @ip in @splunk_ip.strip().split(",")
+	if @ip
+		@splunk_ip_list=@ip+":9997"+","+@splunk_ip_list
+	end
+end
+%>
+server = <%= @splunk_ip_list %>
 
-[tcpout-server://<%= @splunk_ip %>:9997]
+<%
+for @ip in @splunk_ip.strip().split(",")
+	if @ip
+%>
+[tcpout-server://<%= @ip %>:9997]
+<% 
+	end
+end
+%>

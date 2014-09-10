@@ -15,6 +15,7 @@ splunkaddonsos_tgz="splunk-on-splunk-sos-add-on-for-unix-and-linux_205.tgz"
 
 search_head_ip="192.168.50.2"
 master_ip="192.168.50.3"
+forwarder_ip="192.168.50.5"
 
 peers = [
 { :hostname => 'peer1', :ip => '192.168.50.11' },
@@ -121,6 +122,33 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           "master_ip" => master_ip
         }
       end
+    end
+  end
+
+  # Configure the forwarder vm
+  config.vm.define "forwarder" do |forwarder|
+    forwarder.vm.host_name = "forwarder"
+
+    forwarder.vm.provider "virtualbox" do |vb|
+      # Use VBoxManage to customize the VM. For example to change memory:
+      vb.customize ["modifyvm", :id, "--memory", "256"]
+      vb.customize ["modifyvm", :id, "--name", "forwarder"]
+    end
+
+    forwarder.vm.network "private_network", ip: forwarder_ip
+
+    forwarder.vm.synced_folder "../apps/", "/media/apps"
+    forwarder.vm.synced_folder "../rpms/", "/media/rpms"
+
+    forwarder.vm.provision :puppet do |puppet|
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "forwarder.pp"
+      puppet.module_path = "../puppet/modules"
+      puppet.facter = {
+        "forwarder_rpm" => forwarder_rpm,
+        "splunkaddonnix_tgz" => splunkaddonnix_tgz,
+        "splunk_ip" => peer_list
+      }
     end
   end
 end
