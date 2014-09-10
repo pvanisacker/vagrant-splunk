@@ -1,17 +1,16 @@
-Splunk installation with forwarder
+Splunk Cluster
 ==============
 
-This vagrant box will start up a splunk server that acts as a indexer and search head.
+This vagrant box will start up a splunk cluster. This includes one search head, one master and 3 peer nodes.
 
-On this server Splunk On Splunk and the Splunk App for Unix and Linux will is installed.
+On the search head Splunk On Splunk and the Splunk App for Unix and Linux will is installed.
 
-It will also create a splunk forwarder vm.
+On the master Splunk On Splunk and the Splunk add on for Unix and Linux will be installed.
 
-The forwarder has the Splunk add on for Unix and Linux installed.
+And on the search peer the Splunk add on for Unix and Linux will be installed.
 
-It also has an Apache HTTP installed and a simple load generation script for generating access logs.
 
-Before starting this box you have to download splunk and the splunk forwarder yourself. As the splunk RPMs are not bundled with this box.
+Before starting these boxes you have to download splunk and the splunk forwarder yourself. As the splunk RPMs are not bundled with this box.
 
 Go to http://www.splunk.com/download and choose the 64bit Linux RPM
 
@@ -31,4 +30,4 @@ Splunk will automatically be started and you can reach it via https://localhost:
 
 You can login to splunk using username admin and password admin.
 
-You should see data coming in from the forwarder. Try the following search: index=os host=forwarder source=/var/log/httpd/access_log
+You should see data coming in from the forwarder. Try the following search: index=os

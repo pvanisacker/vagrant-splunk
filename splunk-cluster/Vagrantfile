@@ -81,7 +81,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "splunk_rpm" => splunk_rpm,
         "sos_tgz" => sos_tgz,
         "sideview_utils_tgz" => sideview_utils_tgz,
-        "splunkonnix_tgz" => splunkonnix_tgz,
+        "splunkaddonnix_tgz" => splunkaddonnix_tgz,
       }
     end
   end
@@ -108,9 +108,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         puppet.module_path = "../puppet/modules"
         puppet.facter = {
           "splunk_rpm" => splunk_rpm,
-          "sos_tgz" => sos_tgz,
-          "sideview_utils_tgz" => sideview_utils_tgz,
-          "splunkonnix_tgz" => splunkonnix_tgz,
+          "splunkaddonnix_tgz" => splunkaddonnix_tgz,
         }
       end
     end
