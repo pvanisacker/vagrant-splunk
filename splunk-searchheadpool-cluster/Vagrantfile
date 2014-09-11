@@ -1,0 +1,127 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+splunk_rpm="splunk-6.1.3-220630-linux-2.6-x86_64.rpm"
+sos_tgz="sos-splunk-on-splunk_32.tgz"
+sideview_utils_tgz="sideview-utils-lgpl_135.tgz"
+splunkonnix_tgz="splunk-app-for-unix-and-linux_501.tgz"
+
+forwarder_rpm="splunkforwarder-6.1.3-220630-linux-2.6-x86_64.rpm"
+splunkaddonnix_tgz="splunk-add-on-for-unix-and-linux_503.tgz"
+splunkaddonsos_tgz="splunk-on-splunk-sos-add-on-for-unix-and-linux_205.tgz"
+
+master_ip="192.168.50.3"
+search_heads = [
+  { :hostname => 'search1', :ip => '192.168.50.4' },
+  { :hostname => 'search2', :ip => '192.168.50.5' }
+]
+
+peers = [
+  { :hostname => 'peer1', :ip => '192.168.50.11' },
+  { :hostname => 'peer2', :ip => '192.168.50.12' },
+  { :hostname => 'peer3', :ip => '192.168.50.13' }
+]
+peer_list=[]
+for peer in peers
+  peer_list << peer[:ip]
+end
+peer_list=peer_list.join(",")
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # Every Vagrant virtual environment requires a box to build off of.
+  config.vm.box = "puppetlabs/centos-6.5-64-puppet"
+
+  # Configure Splunk master first, without it the searchhead cannot be created
+  config.vm.define "master" do |master|
+    master.vm.host_name = "master"
+
+    master.vm.provider "virtualbox" do |vb|
+      # Use VBoxManage to customize the VM. For example to change memory:
+      vb.customize ["modifyvm", :id, "--memory", "256"]
+      vb.customize ["modifyvm", :id, "--name", "master"]
+    end
+
+    master.vm.network "private_network", ip: master_ip
+
+    master.vm.synced_folder "../apps/", "/media/apps"
+    master.vm.synced_folder "../rpms/", "/media/rpms"
+
+    master.vm.provision :puppet do |puppet|
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "master.pp"
+      puppet.module_path = "../puppet/modules"
+      puppet.facter = {
+        "splunk_rpm" => splunk_rpm,
+        "sos_tgz" => sos_tgz,
+        "sideview_utils_tgz" => sideview_utils_tgz,
+        "splunkaddonnix_tgz" => splunkaddonnix_tgz,
+        "splunkaddonsos_tgz" => splunkaddonsos_tgz,
+        "splunk_ip" => peer_list
+      }
+    end
+  end
+
+  search_heads.each do | search_head_node |
+    # Configure the Splunk search heads
+    config.vm.define search_head_node[:hostname] do |search_head|
+      search_head.vm.host_name = search_head_node[:hostname]
+
+      search_head.vm.provider "virtualbox" do |vb|
+        # Use VBoxManage to customize the VM. For example to change memory:
+        vb.customize ["modifyvm", :id, "--memory", "512"]
+        vb.customize ["modifyvm", :id, "--name", search_head_node[:hostname]]
+      end
+
+      search_head.vm.network "private_network", ip: search_head_node[:ip]
+
+      search_head.vm.synced_folder "../apps/", "/media/apps"
+      search_head.vm.synced_folder "../rpms/", "/media/rpms"
+
+      search_head.vm.provision :puppet do |puppet|
+        puppet.manifests_path = "puppet/manifests"
+        puppet.manifest_file  = "search-head.pp"
+        puppet.module_path = "../puppet/modules"
+        puppet.facter = {
+          "splunk_rpm" => splunk_rpm,
+          "sos_tgz" => sos_tgz,
+          "sideview_utils_tgz" => sideview_utils_tgz,
+          "splunkonnix_tgz" => splunkonnix_tgz,
+          "master_ip" => master_ip,
+          "splunk_ip" => peer_list
+        }
+      end
+    end
+  end
+
+  # Configure the indexing peers 
+  peers.each do |peer|
+    config.vm.define peer[:hostname] do |peer_config|
+      peer_config.vm.host_name = peer[:hostname]
+
+      peer_config.vm.provider "virtualbox" do |vb|
+        # Use VBoxManage to customize the VM. For example to change memory:
+        vb.customize ["modifyvm", :id, "--memory", "512"]
+        vb.customize ["modifyvm", :id, "--name", peer[:hostname]]
+      end
+      
+      peer_config.vm.network "private_network", ip: peer[:ip]
+
+      peer_config.vm.synced_folder "../apps/", "/media/apps"
+      peer_config.vm.synced_folder "../rpms/", "/media/rpms"
+
+      peer_config.vm.provision :puppet do |puppet|
+        puppet.manifests_path = "puppet/manifests"
+        puppet.manifest_file  = "peer-node.pp"
+        puppet.module_path = "../puppet/modules"
+        puppet.facter = {
+          "splunk_rpm" => splunk_rpm,
+          "splunkaddonnix_tgz" => splunkaddonnix_tgz,
+          "master_ip" => master_ip
+        }
+      end
+    end
+  end
+end
