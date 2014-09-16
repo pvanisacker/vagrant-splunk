@@ -11,9 +11,7 @@ Currently the following boxes exist
 - splunk-cluster: splunk cluster configuration with 3 slaves, 1 master and 1 searchhead
 - splunk-cluster-with-forwarder: same as above but with one forwarder
 - splunk-searchheadpool-cluster: splunk search head pool with one splunk cluster
-- splunk-searchheadpool-cluster-with-forwarder: splunk search head pool with one splunk cluster ad a forwarder
-- splunk-searchheadpool-multi-cluster: splunk search head pool with 2 splunk clusters each with 2 slaves and one master
-- splunk-searchheadpool-multi-cluster-with-forwarder: splunk search head pool with 2 splunk clusters each with 2 slaves and one master and 2 forwarders
+- splunk-searchheadpool-cluster-with-forwarder: splunk search head pool with one splunk cluster and a forwarder
 
 You cannot run all of these at same time as there will be name collisions in VM names.
 
