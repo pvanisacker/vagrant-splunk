@@ -1,7 +1,10 @@
 include system
 include nfsserver
 include splunk
-include splunk-master
+class { "splunk-master":
+	rep_factor=>2,
+	search_factor=>2,
+}
 include splunk-app-sos
 include splunk-app-sideview-utils
 include splunk-master-app-addon-for-nix

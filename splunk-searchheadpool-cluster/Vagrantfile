@@ -22,7 +22,6 @@ search_heads = [
 peers = [
   { :hostname => 'peer1', :ip => '192.168.50.11' },
   { :hostname => 'peer2', :ip => '192.168.50.12' },
-  { :hostname => 'peer3', :ip => '192.168.50.13' }
 ]
 peer_list=[]
 for peer in peers
@@ -103,7 +102,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       peer_config.vm.provider "virtualbox" do |vb|
         # Use VBoxManage to customize the VM. For example to change memory:
-        vb.customize ["modifyvm", :id, "--memory", "512"]
+        vb.customize ["modifyvm", :id, "--memory", "384"]
         vb.customize ["modifyvm", :id, "--name", peer[:hostname]]
       end
       
