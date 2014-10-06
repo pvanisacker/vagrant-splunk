@@ -13,6 +13,7 @@ Currently the following boxes exist
 - splunk-searchheadpool-cluster: splunk search head pool with one splunk cluster
 - splunk-searchheadpool-cluster-with-forwarder: splunk search head pool with one splunk cluster and a forwarder
 
-You cannot run all of these at same time as there will be name collisions in VM names.
-
-And you'll need quite a bit of RAM memory to run some of the more advanced setups.
+Some notes:
+- You cannot run all of these at same time as there will be name collisions in VM names.
+- This has only been tested on VirtualBox. Not on VMware or AWS
+- You'll need quite a bit of RAM memory to run some of the more advanced setups.
